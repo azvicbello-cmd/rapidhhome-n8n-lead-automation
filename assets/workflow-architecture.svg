@@ -1,24 +1,94 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520">
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="760" viewBox="0 0 1600 760">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L9,3 z" fill="#3b3b3b"/>
+    </marker>
+  </defs>
   <style>
-    .box{fill:#fff;stroke:#222;stroke-width:2;rx:18;ry:18}
-    .title{font:700 24px Arial,sans-serif;fill:#111}
-    .txt{font:18px Arial,sans-serif;fill:#222}
-    .small{font:16px Arial,sans-serif;fill:#444}
-    .line{stroke:#444;stroke-width:3;fill:none;marker-end:url(#a)}
+    .box{fill:#ffffff;stroke:#222222;stroke-width:2;rx:16;ry:16}
+    .secure{fill:#f3fbf7;stroke:#198754;stroke-width:2;rx:16;ry:16}
+    .reject{fill:#fff5f5;stroke:#b42318;stroke-width:2;rx:16;ry:16}
+    .store{fill:#f6f4ff;stroke:#5b4fc7;stroke-width:2;rx:16;ry:16}
+    .title{font:700 28px Arial,sans-serif;fill:#111111}
+    .txt{font:700 18px Arial,sans-serif;fill:#1f1f1f}
+    .small{font:16px Arial,sans-serif;fill:#444444}
+    .line{stroke:#3b3b3b;stroke-width:3;fill:none;marker-end:url(#arrow)}
+    .label{font:700 14px Arial,sans-serif;fill:#444444}
   </style>
-  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#444"/></marker></defs>
-  <text x="40" y="45" class="title">RapidHome n8n Lead Automation</text>
-  <rect x="40" y="90" width="190" height="90" class="box"/><text x="75" y="125" class="txt">POST Webhook</text><text x="62" y="155" class="small">Inbound lead capture</text>
-  <rect x="290" y="90" width="220" height="90" class="box"/><text x="320" y="125" class="txt">Normalize + Score</text><text x="320" y="155" class="small">JavaScript rules</text>
-  <rect x="575" y="90" width="210" height="90" class="box"/><text x="610" y="125" class="txt">Route Lead</text><text x="605" y="155" class="small">HOT / WARM / COLD</text>
-  <path d="M230 135 H290" class="line"/><path d="M510 135 H575" class="line"/>
-  <rect x="880" y="40" width="220" height="95" class="box"/><text x="945" y="75" class="txt">HOT</text><text x="905" y="105" class="small">Telegram alert</text>
-  <rect x="880" y="175" width="220" height="95" class="box"/><text x="935" y="210" class="txt">WARM</text><text x="905" y="240" class="small">Standard follow-up</text>
-  <rect x="880" y="310" width="220" height="95" class="box"/><text x="938" y="345" class="txt">COLD</text><text x="920" y="375" class="small">Nurture path</text>
-  <path d="M785 120 C830 120 835 88 880 88" class="line"/><path d="M785 135 C830 135 835 222 880 222" class="line"/><path d="M785 150 C830 150 835 357 880 357" class="line"/>
-  <rect x="1170" y="40" width="190" height="95" class="box"/><text x="1205" y="75" class="txt">HOT Response</text><text x="1200" y="105" class="small">Success / 502 failure</text>
-  <rect x="1170" y="175" width="190" height="95" class="box"/><text x="1197" y="210" class="txt">WARM Response</text><text x="1210" y="240" class="small">JSON success</text>
-  <rect x="1170" y="310" width="190" height="95" class="box"/><text x="1200" y="345" class="txt">COLD Response</text><text x="1210" y="375" class="small">JSON success</text>
-  <path d="M1100 88 H1170" class="line"/><path d="M1100 222 H1170" class="line"/><path d="M1100 357 H1170" class="line"/>
-  <text x="40" y="470" class="small">Public portfolio diagram — no credentials or client data included.</text>
+
+  <text x="40" y="46" class="title">RapidHome n8n Lead Automation - Secure, Stateful, Duplicate-Safe</text>
+
+  <rect x="40" y="100" width="230" height="100" class="secure"/>
+  <text x="74" y="137" class="txt">Authenticated Webhook</text>
+  <text x="70" y="168" class="small">Header Auth + raw body</text>
+
+  <rect x="330" y="100" width="230" height="100" class="secure"/>
+  <text x="374" y="137" class="txt">Compute HMAC</text>
+  <text x="380" y="168" class="small">SHA-256 over raw body</text>
+
+  <rect x="620" y="100" width="235" height="100" class="secure"/>
+  <text x="654" y="137" class="txt">Validate Signature</text>
+  <text x="672" y="168" class="small">Expected vs supplied</text>
+
+  <rect x="930" y="55" width="215" height="90" class="reject"/>
+  <text x="974" y="91" class="txt">Reject Request</text>
+  <text x="990" y="120" class="small">HTTP 401</text>
+
+  <rect x="930" y="190" width="230" height="100" class="box"/>
+  <text x="972" y="228" class="txt">Normalize + Score</text>
+  <text x="980" y="258" class="small">JavaScript rules</text>
+
+  <path d="M270 150 H330" class="line"/>
+  <path d="M560 150 H620" class="line"/>
+  <path d="M855 132 C890 132 895 100 930 100" class="line"/>
+  <text x="870" y="94" class="label">invalid</text>
+  <path d="M740 200 C740 240 865 240 930 240" class="line"/>
+  <text x="756" y="228" class="label">valid</text>
+
+  <rect x="40" y="355" width="235" height="100" class="box"/>
+  <text x="82" y="392" class="txt">Build Idempotency Key</text>
+  <text x="73" y="423" class="small">Deterministic lead_key</text>
+
+  <rect x="340" y="355" width="235" height="100" class="store"/>
+  <text x="389" y="392" class="txt">Duplicate Check</text>
+  <text x="374" y="423" class="small">Persistent Data Table</text>
+
+  <rect x="640" y="310" width="220" height="90" class="store"/>
+  <text x="691" y="346" class="txt">Store New Lead</text>
+  <text x="690" y="375" class="small">Persistent state</text>
+
+  <rect x="640" y="435" width="220" height="90" class="box"/>
+  <text x="674" y="471" class="txt">Duplicate Response</text>
+  <text x="689" y="500" class="small">Stop repeat work</text>
+
+  <path d="M1045 290 C1045 330 275 330 275 405" class="line"/>
+  <path d="M275 405 H340" class="line"/>
+  <path d="M575 387 C610 387 610 355 640 355" class="line"/>
+  <text x="596" y="350" class="label">new</text>
+  <path d="M575 423 C610 423 610 480 640 480" class="line"/>
+  <text x="588" y="464" class="label">duplicate</text>
+
+  <rect x="930" y="355" width="220" height="100" class="box"/>
+  <text x="980" y="392" class="txt">Route Lead</text>
+  <text x="964" y="423" class="small">HOT / WARM / COLD</text>
+
+  <path d="M860 355 H930" class="line"/>
+
+  <rect x="1240" y="260" width="260" height="100" class="box"/>
+  <text x="1345" y="297" class="txt">HOT</text>
+  <text x="1274" y="328" class="small">Telegram alert + retries</text>
+
+  <rect x="1240" y="395" width="260" height="100" class="box"/>
+  <text x="1334" y="432" class="txt">WARM</text>
+  <text x="1294" y="463" class="small">Standard follow-up</text>
+
+  <rect x="1240" y="530" width="260" height="100" class="box"/>
+  <text x="1338" y="567" class="txt">COLD</text>
+  <text x="1312" y="598" class="small">Nurture path</text>
+
+  <path d="M1150 385 C1190 385 1195 310 1240 310" class="line"/>
+  <path d="M1150 405 C1190 405 1195 445 1240 445" class="line"/>
+  <path d="M1150 425 C1190 425 1195 580 1240 580" class="line"/>
+
+  <text x="40" y="705" class="small">Verified portfolio architecture. Public artifacts exclude credentials, HMAC secrets, chat IDs, private table identifiers, and client data.</text>
 </svg>
