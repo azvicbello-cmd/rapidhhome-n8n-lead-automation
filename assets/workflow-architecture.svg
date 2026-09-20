@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="520" viewBox="0 0 1400 520">
+  <style>
+    .box{fill:#fff;stroke:#222;stroke-width:2;rx:18;ry:18}
+    .title{font:700 24px Arial,sans-serif;fill:#111}
+    .txt{font:18px Arial,sans-serif;fill:#222}
+    .small{font:16px Arial,sans-serif;fill:#444}
+    .line{stroke:#444;stroke-width:3;fill:none;marker-end:url(#a)}
+  </style>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#444"/></marker></defs>
+  <text x="40" y="45" class="title">RapidHome n8n Lead Automation</text>
+  <rect x="40" y="90" width="190" height="90" class="box"/><text x="75" y="125" class="txt">POST Webhook</text><text x="62" y="155" class="small">Inbound lead capture</text>
+  <rect x="290" y="90" width="220" height="90" class="box"/><text x="320" y="125" class="txt">Normalize + Score</text><text x="320" y="155" class="small">JavaScript rules</text>
+  <rect x="575" y="90" width="210" height="90" class="box"/><text x="610" y="125" class="txt">Route Lead</text><text x="605" y="155" class="small">HOT / WARM / COLD</text>
+  <path d="M230 135 H290" class="line"/><path d="M510 135 H575" class="line"/>
+  <rect x="880" y="40" width="220" height="95" class="box"/><text x="945" y="75" class="txt">HOT</text><text x="905" y="105" class="small">Telegram alert</text>
+  <rect x="880" y="175" width="220" height="95" class="box"/><text x="935" y="210" class="txt">WARM</text><text x="905" y="240" class="small">Standard follow-up</text>
+  <rect x="880" y="310" width="220" height="95" class="box"/><text x="938" y="345" class="txt">COLD</text><text x="920" y="375" class="small">Nurture path</text>
+  <path d="M785 120 C830 120 835 88 880 88" class="line"/><path d="M785 135 C830 135 835 222 880 222" class="line"/><path d="M785 150 C830 150 835 357 880 357" class="line"/>
+  <rect x="1170" y="40" width="190" height="95" class="box"/><text x="1205" y="75" class="txt">HOT Response</text><text x="1200" y="105" class="small">Success / 502 failure</text>
+  <rect x="1170" y="175" width="190" height="95" class="box"/><text x="1197" y="210" class="txt">WARM Response</text><text x="1210" y="240" class="small">JSON success</text>
+  <rect x="1170" y="310" width="190" height="95" class="box"/><text x="1200" y="345" class="txt">COLD Response</text><text x="1210" y="375" class="small">JSON success</text>
+  <path d="M1100 88 H1170" class="line"/><path d="M1100 222 H1170" class="line"/><path d="M1100 357 H1170" class="line"/>
+  <text x="40" y="470" class="small">Public portfolio diagram — no credentials or client data included.</text>
+</svg>
