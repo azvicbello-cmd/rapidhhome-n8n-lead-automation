@@ -124,6 +124,29 @@ Before importing it into your own n8n instance:
 
 The public JSON intentionally removes credentials, chat IDs, private table IDs, webhook/runtime IDs, workflow IDs, version IDs, and instance metadata.
 
+## Reproduce the signed webhook tests
+
+A sanitized PowerShell test client is included at [`examples/test-webhook.ps1`](examples/test-webhook.ps1).
+
+It reads secrets from environment variables instead of hard-coding them:
+
+```powershell
+$env:RAPIDHHOME_WEBHOOK_URL = "https://your-n8n-host/webhook/rapidhhome-lead"
+$env:RAPIDHHOME_AUTH_HEADER_NAME = "your-header-name"
+$env:RAPIDHHOME_AUTH_HEADER_VALUE = "your-header-secret"
+$env:RAPIDHHOME_HMAC_SECRET = "your-hmac-secret"
+```
+
+Run the three core checks:
+
+```powershell
+./examples/test-webhook.ps1 -Mode valid
+./examples/test-webhook.ps1 -Mode invalid
+./examples/test-webhook.ps1 -Mode duplicate
+```
+
+The script signs the exact compact JSON body with HMAC-SHA256, sends the signature in `x-rapidhhome-signature`, and can repeat the same signed payload to exercise duplicate protection.
+
 ## Security hygiene
 
 Never commit:
