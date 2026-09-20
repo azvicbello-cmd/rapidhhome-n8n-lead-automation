@@ -1,44 +1,99 @@
-# RapidHome Lead Automation – n8n
+# RapidHome Lead Automation - n8n
 
-A portfolio-ready n8n workflow for qualifying and routing inbound home-service leads.
+A production-minded n8n lead intake and response workflow for home-service businesses. RapidHome accepts inbound leads, protects the webhook, prevents duplicate processing, scores and routes leads, alerts on urgent opportunities, and returns structured API responses.
 
-## What it does
+## Highlights
 
-- Receives leads through a POST webhook.
-- Normalizes incoming lead data with JavaScript.
-- Scores leads using contact completeness and urgency keywords.
-- Routes leads into **HOT**, **WARM**, and **COLD** paths.
-- Sends an immediate Telegram alert for HOT leads.
-- Retries Telegram delivery on transient failures.
-- Captures notification failures and returns a structured error response.
-- Returns structured JSON responses for each lead route.
+- Authenticated POST webhook using n8n Header Auth.
+- Raw-body HMAC-SHA256 signature verification before lead processing.
+- Explicit rejection of invalid signatures with HTTP 401.
+- Deterministic `lead_key` generation for idempotency.
+- Persistent lead storage with n8n Data Tables.
+- Duplicate detection so repeated webhook deliveries do not create duplicate records or trigger repeat processing.
+- JavaScript normalization and deterministic lead scoring.
+- HOT / WARM / COLD routing.
+- Immediate Telegram alerting for HOT leads.
+- Retry and failure handling for notification delivery.
+- Structured webhook responses for success, duplicate, authorization failure, and downstream notification failure.
 
-> **Important:** the current public demo uses deterministic rules/keyword scoring. It does **not** call an LLM. An AI/LLM qualification step can be added later when a client requires it.
+> The qualification logic in the current build is deterministic and rule-based. It does not claim to use an LLM. AI-assisted qualification can be added as a separate extension when a business use case justifies it.
 
-## Workflow architecture
+## Architecture
 
 ![RapidHome workflow architecture](assets/workflow-architecture.svg)
 
-## Tested behavior
+The security and reliability path is:
 
-The workflow was tested end-to-end with HOT, WARM, and COLD sample leads.
+```text
+Authenticated Webhook
+        |
+        v
+HMAC-SHA256 over raw request body
+        |
+        v
+Signature validation
+   | valid        | invalid
+   v              v
+Normalize      HTTP 401
++ score
+   |
+   v
+Deterministic lead key
+   |
+   v
+Persistent duplicate check
+   | new          | duplicate
+   v              v
+Store lead     Duplicate response
+   |
+   v
+HOT / WARM / COLD routing
+```
 
-- **HOT:** urgent HVAC-style lead → high-priority route → Telegram alert → structured success response.
-- **WARM:** routine service request → normal follow-up route → structured success response.
-- **COLD:** general inquiry → nurture route → structured success response.
-- **Failure handling:** Telegram notification errors are retried; after retry exhaustion the workflow captures the failure and returns HTTP 502.
-- **External access:** the webhook was also tested through a public HTTPS tunnel during development.
+## Verified behavior
 
-## Import into n8n
+The current build has been tested end-to-end.
 
-1. Download `RapidHome_n8n_Public_Demo.json`.
-2. In n8n, create or open a workflow and import the JSON file.
-3. Open **Send Telegram Alert** and attach your own Telegram credential.
-4. Replace `YOUR_TELEGRAM_CHAT_ID` with your own chat ID.
-5. Review the webhook path and lead-scoring rules for your use case.
-6. Test HOT, WARM, and COLD examples before publishing.
+| Scenario | Expected result | Verified |
+| --- | --- | --- |
+| Missing/incorrect Header Auth | Request blocked before workflow processing | Yes - HTTP 403 |
+| Correct Header Auth + invalid HMAC | Request rejected before lead processing | Yes - HTTP 401 |
+| Correct Header Auth + valid HMAC | Request allowed into the workflow | Yes |
+| First valid lead | Stored once and routed | Yes |
+| Same valid lead submitted again | Duplicate response, no second data-table row | Yes |
+| HOT lead | Priority Telegram alert path | Yes |
+| WARM lead | Standard follow-up path | Yes |
+| COLD lead | Nurture path | Yes |
+| Telegram delivery failure | Retry/failure path and structured error response | Yes |
 
-## Example request
+## Idempotency
+
+RapidHome derives a deterministic `lead_key` from normalized lead attributes. Before downstream processing, the workflow checks the persistent `rapidhhome_leads` data table.
+
+If a matching key already exists, the workflow stops repeat processing and returns a duplicate response. This protects against duplicate webhook deliveries and client retries.
+
+Example duplicate response:
+
+```json
+{
+  "status": "duplicate",
+  "message": "Lead has already been processed",
+  "lead_key": "lead:example@example.com|15550123456|example customer|hvac maintenance|2026-09-25"
+}
+```
+
+## Webhook security
+
+RapidHome uses two separate controls:
+
+1. **Header authentication** gates access to the webhook.
+2. **HMAC-SHA256 payload verification** validates that the request body matches the signature supplied by the sender.
+
+The HMAC is calculated over the raw request body rather than a re-serialized JSON object. The public repository does not contain either secret.
+
+See [SECURITY_AND_TESTING.md](SECURITY_AND_TESTING.md) for the validation matrix and security notes.
+
+## Example lead payload
 
 ```json
 {
@@ -51,28 +106,30 @@ The workflow was tested end-to-end with HOT, WARM, and COLD sample leads.
 }
 ```
 
-## Example HOT response
+## Public workflow export
 
-```json
-{
-  "success": true,
-  "qualification": "hot",
-  "message": "Hot lead received and urgent notification sent successfully."
-}
-```
+`RapidHome_n8n_Public_Demo.json` is a sanitized baseline export with credentials and private identifiers removed. The live portfolio build has since been extended with authenticated webhook intake, HMAC verification, persistent idempotency, and duplicate-safe processing.
 
-## Security
+A refreshed advanced export should only replace the public JSON after all credentials, table identifiers, chat IDs, instance IDs, and private values have been sanitized.
 
-This public version intentionally excludes:
+## Security hygiene
 
-- Telegram bot tokens / API credentials
-- the original Telegram chat ID
+Never commit:
+
+- Header Auth secrets
+- HMAC signing secrets
+- Telegram bot tokens
+- Telegram chat IDs
 - n8n credential references
-- n8n instance/workflow identifiers
-- generated webhook IDs
-
-Never commit real API keys, bot tokens, or client credentials to a public repository.
+- private n8n instance or workflow identifiers
+- production client data
 
 ## Skills demonstrated
 
-n8n · Workflow Automation · JavaScript · Webhooks · API Integration · Conditional Routing · Error Handling · Retry Logic · Telegram Integration
+n8n · Workflow Automation · JavaScript · Webhooks · HMAC-SHA256 · API Security · Idempotency · Persistent State · Data Tables · Conditional Routing · Error Handling · Retry Logic · Telegram Integration · Structured API Responses
+
+## Portfolio
+
+Built by **Victor Bello**.
+
+LinkedIn: https://www.linkedin.com/in/victor-bello-az
