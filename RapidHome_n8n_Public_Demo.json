@@ -1,0 +1,472 @@
+{
+  "name": "RapidHome Lead Automation – Public Demo",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "rapidhhome-lead",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "14505cb7-cddd-49f2-8180-9f22d102a044",
+      "name": "Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "const lead = $json.body ?? $json;\n\nconst name = String(lead.name ?? '').trim();\nconst email = String(lead.email ?? '').trim().toLowerCase();\nconst phone = String(lead.phone ?? '').trim();\nconst service = String(lead.service ?? '').trim();\nconst description = String(lead.description ?? '').trim();\nconst preferredDate = String(lead.preferred_date ?? '').trim();\n\nconst text = `${service} ${description}`.toLowerCase();\n\nlet score = 0;\n\nconst hotWords = [\n  'urgent',\n  'today',\n  'emergency',\n  'stopped',\n  'not working',\n  'no cooling',\n  'no heat',\n  'leak',\n  'flood',\n  'immediately'\n];\n\nfor (const word of hotWords) {\n  if (text.includes(word)) score += 15;\n}\n\nif (name) score += 5;\nif (email) score += 5;\nif (phone) score += 10;\nif (preferredDate) score += 10;\n\nlet qualification = 'cold';\nlet urgency = 'low';\n\nif (score >= 50) {\n  qualification = 'hot';\n  urgency = 'high';\n} else if (score >= 25) {\n  qualification = 'warm';\n  urgency = 'normal';\n}\n\nreturn [\n  {\n    json: {\n      name,\n      email,\n      phone,\n      service,\n      description,\n      preferred_date: preferredDate,\n      lead_score: score,\n      qualification,\n      urgency,\n      received_at: new Date().toISOString()\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "c64274a6-4979-416a-adff-8dfc858b5fa1",
+      "name": "Normalize & Score Lead"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.qualification}}",
+                    "rightValue": "hot",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "hot-rule"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "HOT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.qualification}}",
+                    "rightValue": "warm",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "warm-rule"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "WARM"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{$json.qualification}}",
+                    "rightValue": "cold",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "cold-rule"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "COLD"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        0
+      ],
+      "id": "93bd8f34-8328-43e4-98ff-8975bd3857ec",
+      "name": "Route by Qualification"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "alert-type",
+              "name": "alert_type",
+              "value": "HOT_LEAD",
+              "type": "string"
+            },
+            {
+              "id": "priority",
+              "name": "priority",
+              "value": "IMMEDIATE",
+              "type": "string"
+            },
+            {
+              "id": "alert-title",
+              "name": "=alert_title",
+              "value": "={{ \"🔥 HOT LEAD: \" + $json.name + \" — \" + $json.service }}",
+              "type": "string"
+            },
+            {
+              "id": "alert-message",
+              "name": "=alert_message",
+              "value": "={{ \"🚨 HOT LEAD ALERT\\n\\nName: \" + $json.name + \"\\nPhone: \" + $json.phone + \"\\nEmail: \" + $json.email + \"\\nService: \" + $json.service + \"\\nLead Score: \" + $json.lead_score + \"\\nUrgency: \" + $json.urgency + \"\\n\\nProblem: \" + $json.description + \"\\n\\nPreferred Date: \" + $json.preferred_date + \"\\n\\nACTION: Contact this lead immediately.\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        -160
+      ],
+      "id": "639e9c8f-4f88-4bff-a798-cd13c5c0c5c2",
+      "name": "Build HOT Alert"
+    },
+    {
+      "parameters": {
+        "chatId": "YOUR_TELEGRAM_CHAT_ID",
+        "text": "={{$json.alert_message}}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        896,
+        -192
+      ],
+      "id": "e654290e-4288-460a-b0b0-4487ea06c0e5",
+      "name": "Send Telegram Alert",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "warm-type",
+              "name": "followup_type",
+              "value": "STANDARD_FOLLOWUP",
+              "type": "string"
+            },
+            {
+              "id": "warm-priority",
+              "name": "priority",
+              "value": "NORMAL",
+              "type": "string"
+            },
+            {
+              "id": "warm-message",
+              "name": "=followup_message",
+              "value": "={{ \"Hi \" + $json.name + \", thanks for reaching out about \" + $json.service + \". We received your request and a team member will follow up shortly. Your preferred date is \" + $json.preferred_date + \".\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        0
+      ],
+      "id": "c453aab7-5b33-43f4-9f8d-b2be7e9eca8b",
+      "name": "Prepare WARM Follow-Up"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cold-type",
+              "name": "followup_type",
+              "value": "NURTURE",
+              "type": "string"
+            },
+            {
+              "id": "cold-priority",
+              "name": "priority",
+              "value": "LOW",
+              "type": "string"
+            },
+            {
+              "id": "cold-message",
+              "name": "=followup_message",
+              "value": "={{ \"Hi \" + $json.name + \", thanks for contacting us about \" + $json.service + \". We have received your request and will keep your details on file. A team member will reach out if additional information is needed.\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        672,
+        176
+      ],
+      "id": "8e62f295-af91-4121-93f0-18e990b93973",
+      "name": "Prepare COLD Nurture"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "failure-stage",
+              "name": "failure_stage",
+              "value": "TELEGRAM_NOTIFICATION",
+              "type": "string"
+            },
+            {
+              "id": "failure-status",
+              "name": "failure_status",
+              "value": "FAILED_AFTER_RETRIES",
+              "type": "string"
+            },
+            {
+              "id": "failure-message",
+              "name": "=failure_message",
+              "value": "={{ $json.error?.message || $json.message || \"Telegram notification failed after retry attempts\" }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1120,
+        -16
+      ],
+      "id": "5eb37e09-2bae-4897-a5e1-642f2776456c",
+      "name": "Capture Telegram Failure"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"qualification\": \"warm\",\n  \"message\": \"Lead received and queued for follow-up.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        896,
+        0
+      ],
+      "id": "1fa19d6d-88b3-46f1-8cab-fea5fa7ba53b",
+      "name": "Respond WARM Success"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"qualification\": \"cold\",\n  \"message\": \"Lead received and added to the nurture queue.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        896,
+        192
+      ],
+      "id": "d427bb7c-c2d8-4446-aae8-49004b0c16cb",
+      "name": "Respond COLD Success"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": true,\n  \"qualification\": \"hot\",\n  \"message\": \"Hot lead received and urgent notification sent successfully.\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1120,
+        -176
+      ],
+      "id": "76e54cdf-7ab3-498a-819d-f787c94eaceb",
+      "name": "Respond HOT Success"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "{\n  \"success\": false,\n  \"qualification\": \"hot\",\n  \"message\": \"Lead was received, but the urgent Telegram notification failed after retries.\"\n}",
+        "options": {
+          "responseCode": 502
+        }
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1344,
+        -16
+      ],
+      "id": "f63edaa6-b153-416d-9bed-cb46d9ea85d6",
+      "name": "Respond HOT Failure"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Normalize & Score Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize & Score Lead": {
+      "main": [
+        [
+          {
+            "node": "Route by Qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Qualification": {
+      "main": [
+        [
+          {
+            "node": "Build HOT Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare WARM Follow-Up",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare COLD Nurture",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build HOT Alert": {
+      "main": [
+        [
+          {
+            "node": "Send Telegram Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Telegram Alert": {
+      "main": [
+        [
+          {
+            "node": "Respond HOT Success",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Capture Telegram Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare WARM Follow-Up": {
+      "main": [
+        [
+          {
+            "node": "Respond WARM Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare COLD Nurture": {
+      "main": [
+        [
+          {
+            "node": "Respond COLD Success",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Capture Telegram Failure": {
+      "main": [
+        [
+          {
+            "node": "Respond HOT Failure",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "nodeGroups": [],
+  "tags": []
+}
