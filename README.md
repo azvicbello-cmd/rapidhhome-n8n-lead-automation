@@ -1,6 +1,6 @@
 # RapidHome Lead Automation - n8n
 
-A production-minded n8n lead intake and response workflow for home-service businesses. RapidHome accepts inbound leads, protects the webhook, prevents duplicate processing, scores and routes leads, alerts on urgent opportunities, and returns structured API responses.
+A production-minded n8n lead intake and response workflow for home-service businesses. RapidHome accepts authenticated inbound leads, validates request integrity, prevents duplicate processing, scores and routes leads, alerts on urgent opportunities, and returns structured API responses.
 
 ## Highlights
 
@@ -14,45 +14,48 @@ A production-minded n8n lead intake and response workflow for home-service busin
 - HOT / WARM / COLD routing.
 - Immediate Telegram alerting for HOT leads.
 - Retry and failure handling for notification delivery.
-- Structured webhook responses for success, duplicate, authorization failure, and downstream notification failure.
+- Structured responses for success, duplicates, authorization failure, and downstream notification failure.
 
-> The qualification logic in the current build is deterministic and rule-based. It does not claim to use an LLM. AI-assisted qualification can be added as a separate extension when a business use case justifies it.
+> The qualification logic is deterministic and rule-based. This project does not claim that an LLM performs lead qualification. AI enrichment or classification can be added as a separate layer when the business case requires it.
 
-## Architecture
+## Current architecture
 
 ![RapidHome workflow architecture](assets/workflow-architecture.svg)
 
-The security and reliability path is:
+The current exported workflow uses this exact logical flow:
 
 ```text
-Authenticated Webhook
-        |
-        v
-HMAC-SHA256 over raw request body
-        |
-        v
-Signature validation
-   | valid        | invalid
-   v              v
-Normalize      HTTP 401
-+ score
-   |
-   v
-Deterministic lead key
-   |
-   v
-Persistent duplicate check
-   | new          | duplicate
-   v              v
-Store lead     Duplicate response
-   |
-   v
-HOT / WARM / COLD routing
+Webhook
+  |
+  v
+Compute HMAC Signature
+  |
+  v
+Validate HMAC Signature
+  | valid                         | invalid
+  v                               v
+Normalize & Score Lead       Reject Invalid Signature (401)
+  |
+  +--------------------+
+  |                    |
+  v                    v
+Check Duplicate Lead   Check New Lead
+  | duplicate               | new
+  v                         v
+Respond Duplicate       Insert New Lead
+Lead                         |
+                             v
+                     Restore Lead Payload
+                             |
+                             v
+                   Route by Qualification
+                    /        |         \
+                  HOT       WARM       COLD
 ```
 
-## Verified behavior
+The HOT branch sends a Telegram alert and has separate success and failure handling. WARM and COLD leads follow their own structured response paths.
 
-The current build has been tested end-to-end.
+## Verified behavior
 
 | Scenario | Expected result | Verified |
 | --- | --- | --- |
@@ -68,9 +71,9 @@ The current build has been tested end-to-end.
 
 ## Idempotency
 
-RapidHome derives a deterministic `lead_key` from normalized lead attributes. Before downstream processing, the workflow checks the persistent `rapidhhome_leads` data table.
+RapidHome derives a deterministic `lead_key` from normalized lead attributes. If the source provides a stable external lead ID, that ID can be used. Otherwise the workflow builds a key from normalized contact/service fields.
 
-If a matching key already exists, the workflow stops repeat processing and returns a duplicate response. This protects against duplicate webhook deliveries and client retries.
+Before downstream processing, the workflow checks persistent n8n Data Table storage. Existing keys return a duplicate response rather than storing or processing the same lead again.
 
 Example duplicate response:
 
@@ -87,11 +90,11 @@ Example duplicate response:
 RapidHome uses two separate controls:
 
 1. **Header authentication** gates access to the webhook.
-2. **HMAC-SHA256 payload verification** validates that the request body matches the signature supplied by the sender.
+2. **HMAC-SHA256 payload verification** validates that the raw request body matches the signature supplied by the sender.
 
-The HMAC is calculated over the raw request body rather than a re-serialized JSON object. The public repository does not contain either secret.
+Invalid signatures exit early through a dedicated HTTP 401 response and never reach lead normalization or routing.
 
-See [SECURITY_AND_TESTING.md](SECURITY_AND_TESTING.md) for the validation matrix and security notes.
+See [SECURITY_AND_TESTING.md](SECURITY_AND_TESTING.md) for the verification matrix.
 
 ## Example lead payload
 
@@ -108,9 +111,18 @@ See [SECURITY_AND_TESTING.md](SECURITY_AND_TESTING.md) for the validation matrix
 
 ## Public workflow export
 
-`RapidHome_n8n_Public_Demo.json` is a sanitized baseline export with credentials and private identifiers removed. The live portfolio build has since been extended with authenticated webhook intake, HMAC verification, persistent idempotency, and duplicate-safe processing.
+[`RapidHome_n8n_Public_Demo.json`](RapidHome_n8n_Public_Demo.json) is the sanitized advanced workflow export that matches the current architecture.
 
-A refreshed advanced export should only replace the public JSON after all credentials, table identifiers, chat IDs, instance IDs, and private values have been sanitized.
+Before importing it into your own n8n instance:
+
+1. Create and attach your own Header Auth credential to **Webhook**.
+2. Create and attach your own Crypto credential with an HMAC secret to **Compute HMAC Signature**.
+3. Create a Data Table with the fields expected by the lead-storage nodes, then select it in **Check Duplicate Lead**, **Check New Lead**, and **Insert New Lead**.
+4. Attach your own Telegram credential and replace `YOUR_TELEGRAM_CHAT_ID`.
+5. Keep secrets in n8n credentials or another secure secret store. Do not hard-code them into a public workflow export.
+6. Test valid-signature, invalid-signature, new-lead, duplicate-lead, HOT, WARM, COLD, and notification-failure paths before production use.
+
+The public JSON intentionally removes credentials, chat IDs, private table IDs, webhook/runtime IDs, workflow IDs, version IDs, and instance metadata.
 
 ## Security hygiene
 
@@ -121,6 +133,7 @@ Never commit:
 - Telegram bot tokens
 - Telegram chat IDs
 - n8n credential references
+- private Data Table identifiers
 - private n8n instance or workflow identifiers
 - production client data
 
