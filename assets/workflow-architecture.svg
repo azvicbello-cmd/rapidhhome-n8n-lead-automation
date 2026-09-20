@@ -1,94 +1,20 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="760" viewBox="0 0 1600 760">
-  <defs>
-    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L9,3 z" fill="#3b3b3b"/>
-    </marker>
-  </defs>
-  <style>
-    .box{fill:#ffffff;stroke:#222222;stroke-width:2;rx:16;ry:16}
-    .secure{fill:#f3fbf7;stroke:#198754;stroke-width:2;rx:16;ry:16}
-    .reject{fill:#fff5f5;stroke:#b42318;stroke-width:2;rx:16;ry:16}
-    .store{fill:#f6f4ff;stroke:#5b4fc7;stroke-width:2;rx:16;ry:16}
-    .title{font:700 28px Arial,sans-serif;fill:#111111}
-    .txt{font:700 18px Arial,sans-serif;fill:#1f1f1f}
-    .small{font:16px Arial,sans-serif;fill:#444444}
-    .line{stroke:#3b3b3b;stroke-width:3;fill:none;marker-end:url(#arrow)}
-    .label{font:700 14px Arial,sans-serif;fill:#444444}
-  </style>
-
-  <text x="40" y="46" class="title">RapidHome n8n Lead Automation - Secure, Stateful, Duplicate-Safe</text>
-
-  <rect x="40" y="100" width="230" height="100" class="secure"/>
-  <text x="74" y="137" class="txt">Authenticated Webhook</text>
-  <text x="70" y="168" class="small">Header Auth + raw body</text>
-
-  <rect x="330" y="100" width="230" height="100" class="secure"/>
-  <text x="374" y="137" class="txt">Compute HMAC</text>
-  <text x="380" y="168" class="small">SHA-256 over raw body</text>
-
-  <rect x="620" y="100" width="235" height="100" class="secure"/>
-  <text x="654" y="137" class="txt">Validate Signature</text>
-  <text x="672" y="168" class="small">Expected vs supplied</text>
-
-  <rect x="930" y="55" width="215" height="90" class="reject"/>
-  <text x="974" y="91" class="txt">Reject Request</text>
-  <text x="990" y="120" class="small">HTTP 401</text>
-
-  <rect x="930" y="190" width="230" height="100" class="box"/>
-  <text x="972" y="228" class="txt">Normalize + Score</text>
-  <text x="980" y="258" class="small">JavaScript rules</text>
-
-  <path d="M270 150 H330" class="line"/>
-  <path d="M560 150 H620" class="line"/>
-  <path d="M855 132 C890 132 895 100 930 100" class="line"/>
-  <text x="870" y="94" class="label">invalid</text>
-  <path d="M740 200 C740 240 865 240 930 240" class="line"/>
-  <text x="756" y="228" class="label">valid</text>
-
-  <rect x="40" y="355" width="235" height="100" class="box"/>
-  <text x="82" y="392" class="txt">Build Idempotency Key</text>
-  <text x="73" y="423" class="small">Deterministic lead_key</text>
-
-  <rect x="340" y="355" width="235" height="100" class="store"/>
-  <text x="389" y="392" class="txt">Duplicate Check</text>
-  <text x="374" y="423" class="small">Persistent Data Table</text>
-
-  <rect x="640" y="310" width="220" height="90" class="store"/>
-  <text x="691" y="346" class="txt">Store New Lead</text>
-  <text x="690" y="375" class="small">Persistent state</text>
-
-  <rect x="640" y="435" width="220" height="90" class="box"/>
-  <text x="674" y="471" class="txt">Duplicate Response</text>
-  <text x="689" y="500" class="small">Stop repeat work</text>
-
-  <path d="M1045 290 C1045 330 275 330 275 405" class="line"/>
-  <path d="M275 405 H340" class="line"/>
-  <path d="M575 387 C610 387 610 355 640 355" class="line"/>
-  <text x="596" y="350" class="label">new</text>
-  <path d="M575 423 C610 423 610 480 640 480" class="line"/>
-  <text x="588" y="464" class="label">duplicate</text>
-
-  <rect x="930" y="355" width="220" height="100" class="box"/>
-  <text x="980" y="392" class="txt">Route Lead</text>
-  <text x="964" y="423" class="small">HOT / WARM / COLD</text>
-
-  <path d="M860 355 H930" class="line"/>
-
-  <rect x="1240" y="260" width="260" height="100" class="box"/>
-  <text x="1345" y="297" class="txt">HOT</text>
-  <text x="1274" y="328" class="small">Telegram alert + retries</text>
-
-  <rect x="1240" y="395" width="260" height="100" class="box"/>
-  <text x="1334" y="432" class="txt">WARM</text>
-  <text x="1294" y="463" class="small">Standard follow-up</text>
-
-  <rect x="1240" y="530" width="260" height="100" class="box"/>
-  <text x="1338" y="567" class="txt">COLD</text>
-  <text x="1312" y="598" class="small">Nurture path</text>
-
-  <path d="M1150 385 C1190 385 1195 310 1240 310" class="line"/>
-  <path d="M1150 405 C1190 405 1195 445 1240 445" class="line"/>
-  <path d="M1150 425 C1190 425 1195 580 1240 580" class="line"/>
-
-  <text x="40" y="705" class="small">Verified portfolio architecture. Public artifacts exclude credentials, HMAC secrets, chat IDs, private table identifiers, and client data.</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="2700" height="900" viewBox="0 0 2700 900">
+<defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#4b5563"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<style>
+.title{font:700 30px Arial,sans-serif;fill:#111827} .subtitle{font:16px Arial,sans-serif;fill:#4b5563}
+.node{stroke-width:2;rx:14;ry:14} .secure{fill:#eefbf3;stroke:#198754} .reject{fill:#fff1f2;stroke:#b42318}
+.store{fill:#fff7ed;stroke:#c2410c} .response{fill:#fdf2f8;stroke:#be185d} .notify{fill:#eff6ff;stroke:#2563eb}
+.process{fill:#f8fafc;stroke:#475569} .nt{font:700 15px Arial,sans-serif;fill:#111827;text-anchor:middle}
+.ns{font:12px Arial,sans-serif;fill:#475569;text-anchor:middle} .edge{stroke:#4b5563;stroke-width:2.5;fill:none;marker-end:url(#arrow)}
+.el{font:700 12px Arial,sans-serif;fill:#374151} .legend{font:13px Arial,sans-serif;fill:#374151}
+</style>
+<text x="50" y="48" class="title">RapidHome Lead Automation - Current Verified n8n Architecture</text>
+<text x="50" y="77" class="subtitle">Exact logical flow from the current workflow export. Public diagram excludes credentials and private identifiers.</text>
+<path d="M240,186.0 C275,186.0 245,186.0 280,186.0" class="edge"/><path d="M470,186.0 C505,186.0 475,186.0 510,186.0" class="edge"/><path d="M700,186.0 C735,186.0 705,186.0 740,186.0" class="edge"/><text x="720.0" y="178.0" class="el">valid</text><path d="M700,186.0 C735,186.0 475,366.0 510,366.0" class="edge"/><text x="605.0" y="268.0" class="el">invalid</text><path d="M930,186.0 C965,186.0 965,126.0 1000,126.0" class="edge"/><text x="965.0" y="148.0" class="el">new check</text><path d="M930,186.0 C965,186.0 965,336.0 1000,336.0" class="edge"/><text x="965.0" y="253.0" class="el">duplicate check</text><path d="M1190,126.0 C1225,126.0 1205,126.0 1240,126.0" class="edge"/><text x="1215.0" y="118.0" class="el">new</text><path d="M1190,336.0 C1225,336.0 1205,336.0 1240,336.0" class="edge"/><text x="1215.0" y="328.0" class="el">duplicate</text><path d="M1430,126.0 C1465,126.0 1445,126.0 1480,126.0" class="edge"/><path d="M1670,126.0 C1705,126.0 1685,126.0 1720,126.0" class="edge"/><path d="M1910,126.0 C1945,126.0 1925,126.0 1960,126.0" class="edge"/><text x="1935.0" y="118.0" class="el">HOT</text><path d="M1910,126.0 C1945,126.0 1925,346.0 1960,346.0" class="edge"/><text x="1935.0" y="228.0" class="el">WARM</text><path d="M1910,126.0 C1945,126.0 1925,566.0 1960,566.0" class="edge"/><text x="1935.0" y="338.0" class="el">COLD</text><path d="M2150,126.0 C2185,126.0 2155,126.0 2190,126.0" class="edge"/><path d="M2380,126.0 C2415,126.0 2405,81.0 2440,81.0" class="edge"/><text x="2410.0" y="95.5" class="el">success</text><path d="M2380,126.0 C2415,126.0 2405,201.0 2440,201.0" class="edge"/><text x="2410.0" y="155.5" class="el">error</text><path d="M2630,201.0 C2665,201.0 2405,321.0 2440,321.0" class="edge"/><path d="M2150,346.0 C2185,346.0 2155,346.0 2190,346.0" class="edge"/><path d="M2150,566.0 C2185,566.0 2155,566.0 2190,566.0" class="edge"/><rect x="50" y="150" width="190" height="72" class="node secure"/><text x="145.0" y="182" class="nt">Webhook</text><text x="145.0" y="212" class="ns">Header Auth + raw body</text><rect x="280" y="150" width="190" height="72" class="node secure"/><text x="375.0" y="182" class="nt">Compute HMAC Signature</text><text x="375.0" y="212" class="ns">HMAC-SHA256</text><rect x="510" y="150" width="190" height="72" class="node secure"/><text x="605.0" y="182" class="nt">Validate HMAC Signature</text><text x="605.0" y="212" class="ns">IF comparison</text><rect x="740" y="150" width="190" height="72" class="node process"/><text x="835.0" y="182" class="nt">Normalize &amp; Score Lead</text><text x="835.0" y="212" class="ns">JavaScript + lead_key</text><rect x="510" y="330" width="190" height="72" class="node reject"/><text x="605.0" y="362" class="nt">Reject Invalid Signature</text><text x="605.0" y="392" class="ns">HTTP 401</text><rect x="1000" y="90" width="190" height="72" class="node store"/><text x="1095.0" y="122" class="nt">Check New Lead</text><text x="1095.0" y="152" class="ns">Data Table: rowNotExists</text><rect x="1000" y="300" width="190" height="72" class="node store"/><text x="1095.0" y="332" class="nt">Check Duplicate Lead</text><text x="1095.0" y="362" class="ns">Data Table: rowExists</text><rect x="1240" y="90" width="190" height="72" class="node store"/><text x="1335.0" y="122" class="nt">Insert New Lead</text><text x="1335.0" y="152" class="ns">Persistent Data Table</text><rect x="1240" y="300" width="190" height="72" class="node response"/><text x="1335.0" y="332" class="nt">Respond Duplicate Lead</text><text x="1335.0" y="362" class="ns">HTTP 200 duplicate</text><rect x="1480" y="90" width="190" height="72" class="node process"/><text x="1575.0" y="122" class="nt">Restore Lead Payload</text><text x="1575.0" y="152" class="ns">Restore original fields</text><rect x="1720" y="90" width="190" height="72" class="node process"/><text x="1815.0" y="122" class="nt">Route by Qualification</text><text x="1815.0" y="152" class="ns">HOT / WARM / COLD</text><rect x="1960" y="90" width="190" height="72" class="node process"/><text x="2055.0" y="122" class="nt">Build HOT Alert</text><text x="2055.0" y="152" class="ns">Prepare priority message</text><rect x="1960" y="310" width="190" height="72" class="node process"/><text x="2055.0" y="342" class="nt">Prepare WARM Follow-Up</text><text x="2055.0" y="372" class="ns">Standard follow-up</text><rect x="1960" y="530" width="190" height="72" class="node process"/><text x="2055.0" y="562" class="nt">Prepare COLD Nurture</text><text x="2055.0" y="592" class="ns">Nurture response</text><rect x="2190" y="90" width="190" height="72" class="node notify"/><text x="2285.0" y="122" class="nt">Send Telegram Alert</text><text x="2285.0" y="152" class="ns">retry + error output</text><rect x="2440" y="45" width="190" height="72" class="node response"/><text x="2535.0" y="77" class="nt">Respond HOT Success</text><text x="2535.0" y="107" class="ns">success response</text><rect x="2440" y="165" width="190" height="72" class="node notify"/><text x="2535.0" y="197" class="nt">Capture Telegram Failure</text><text x="2535.0" y="227" class="ns">failure capture</text><rect x="2440" y="285" width="190" height="72" class="node response"/><text x="2535.0" y="317" class="nt">Respond HOT Failure</text><text x="2535.0" y="347" class="ns">HTTP 502</text><rect x="2190" y="310" width="190" height="72" class="node response"/><text x="2285.0" y="342" class="nt">Respond WARM Success</text><text x="2285.0" y="372" class="ns">success response</text><rect x="2190" y="530" width="190" height="72" class="node response"/><text x="2285.0" y="562" class="nt">Respond COLD Success</text><text x="2285.0" y="592" class="ns">success response</text>
+<rect x="50" y="790" width="18" height="18" class="node secure"/><text x="78" y="804" class="legend">security</text>
+<rect x="165" y="790" width="18" height="18" class="node store"/><text x="193" y="804" class="legend">persistent state</text>
+<rect x="315" y="790" width="18" height="18" class="node notify"/><text x="343" y="804" class="legend">notification</text>
+<rect x="455" y="790" width="18" height="18" class="node response"/><text x="483" y="804" class="legend">webhook response</text>
+<text x="50" y="850" class="subtitle">Public portfolio diagram. No Header Auth secret, HMAC secret, Telegram credential/chat ID, Data Table ID, workflow ID, version ID, or instance ID is included.</text>
 </svg>
