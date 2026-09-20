@@ -24,8 +24,8 @@ $payload = [ordered]@{
   name = "Michael Brown"
   email = "michael@example.com"
   phone = "+1 555 018 7744"
-  service = "HVAC Repair"
-  description = "Our AC has completely stopped cooling and we need someone urgently today."
+  service = "HVAC Maintenance"
+  description = "We would like to schedule a routine HVAC maintenance visit."
   preferred_date = "2026-09-22"
 }
 
@@ -55,12 +55,42 @@ function Send-TestRequest {
     [Parameter(Mandatory = $true)][string]$Signature
   )
 
-  $headers = @{
-    $authHeaderName = $authHeaderValue
-    "x-rapidhhome-signature" = $Signature
-  }
+  $headers = @{}
+  $headers[$authHeaderName] = $authHeaderValue
+  $headers["x-rapidhhome-signature"] = $Signature
 
-  Invoke-RestMethod -Method Post -Uri $webhookUrl -Headers $headers -ContentType "application/json" -Body $body
+  try {
+    $response = Invoke-RestMethod -Method Post -Uri $webhookUrl -Headers $headers -ContentType "application/json" -Body $body
+    return $response
+  }
+  catch {
+    $statusCode = $null
+    $responseBody = $null
+
+    if ($_.Exception.Response) {
+      try { $statusCode = [int]$_.Exception.Response.StatusCode } catch {}
+
+      try {
+        $stream = $_.Exception.Response.GetResponseStream()
+        if ($stream) {
+          $reader = [System.IO.StreamReader]::new($stream)
+          try { $responseBody = $reader.ReadToEnd() } finally { $reader.Dispose() }
+        }
+      }
+      catch {}
+    }
+
+    if ($statusCode) {
+      Write-Host "HTTP $statusCode"
+    }
+
+    if ($responseBody) {
+      Write-Host $responseBody
+      return
+    }
+
+    throw
+  }
 }
 
 $signature = Get-HmacSha256Hex -Text $body -Secret $hmacSecret
