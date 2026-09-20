@@ -160,6 +160,10 @@ Never commit:
 - private n8n instance or workflow identifiers
 - production client data
 
+## Business value
+
+For a client-facing explanation of the operational problems this architecture addresses and how it can be adapted to service businesses, see [BUSINESS_VALUE.md](BUSINESS_VALUE.md).
+
 ## Skills demonstrated
 
 n8n · Workflow Automation · JavaScript · Webhooks · HMAC-SHA256 · API Security · Idempotency · Persistent State · Data Tables · Conditional Routing · Error Handling · Retry Logic · Telegram Integration · Structured API Responses
