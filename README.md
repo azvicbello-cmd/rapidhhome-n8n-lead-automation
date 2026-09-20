@@ -17,19 +17,17 @@ A portfolio-ready n8n workflow for qualifying and routing inbound home-service l
 
 ## Workflow architecture
 
-![RapidHome workflow architecture](assets/workflow-architecture.png)
+![RapidHome workflow architecture](assets/workflow-architecture.svg)
 
-## HOT lead behavior
+## Tested behavior
 
-A lead with urgent language (for example, an HVAC failure requiring service today) is scored and routed to the HOT path. The workflow builds a priority alert, sends it through Telegram, retries on failure, and returns a success or failure webhook response.
+The workflow was tested end-to-end with HOT, WARM, and COLD sample leads.
 
-![HOT lead live test](assets/hot-lead-live-test.png)
-
-## Public webhook proof
-
-The workflow was also tested through a public HTTPS tunnel during development, confirming that an external request could reach the local n8n workflow and receive a structured response.
-
-![Public webhook test](assets/public-webhook-test.png)
+- **HOT:** urgent HVAC-style lead → high-priority route → Telegram alert → structured success response.
+- **WARM:** routine service request → normal follow-up route → structured success response.
+- **COLD:** general inquiry → nurture route → structured success response.
+- **Failure handling:** Telegram notification errors are retried; after retry exhaustion the workflow captures the failure and returns HTTP 502.
+- **External access:** the webhook was also tested through a public HTTPS tunnel during development.
 
 ## Import into n8n
 
