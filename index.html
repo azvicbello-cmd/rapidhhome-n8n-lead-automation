@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="description" content="RapidHome is an n8n lead intake, qualification, routing and response automation built by Victor Bello." />
+  <title>RapidHome | n8n Lead Automation</title>
+  <style>
+    :root{
+      --bg:#090b10; --panel:#10141c; --panel2:#141a24; --text:#f6f7fb;
+      --muted:#aeb7c7; --line:#252d3b; --orange:#ff6d2e; --green:#42d392;
+      --blue:#62a7ff; --pink:#ff5ca8; --max:1160px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:
+      radial-gradient(900px 500px at 20% -10%,rgba(255,109,46,.12),transparent 60%),
+      radial-gradient(800px 500px at 90% 0%,rgba(98,167,255,.09),transparent 55%),
+      var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;line-height:1.6}
+    a{color:inherit;text-decoration:none}
+    .wrap{width:min(var(--max),calc(100% - 36px));margin:auto}
+    nav{position:sticky;top:0;z-index:20;backdrop-filter:blur(16px);background:rgba(9,11,16,.78);border-bottom:1px solid rgba(255,255,255,.06)}
+    .navin{height:68px;display:flex;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:10px;align-items:center;font-weight:800;letter-spacing:-.02em}
+    .dot{width:12px;height:12px;border-radius:4px;background:var(--orange);box-shadow:0 0 24px rgba(255,109,46,.5)}
+    .navlinks{display:flex;gap:22px;color:var(--muted);font-size:14px}
+    .hero{padding:96px 0 56px;text-align:center}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border:1px solid #2c3442;border-radius:999px;color:#d9dfeb;background:#10151d;font-size:13px}
+    .eyebrow i{width:7px;height:7px;background:var(--green);border-radius:50%;display:inline-block}
+    h1{font-size:clamp(44px,7vw,78px);line-height:1.02;letter-spacing:-.055em;margin:24px auto 20px;max-width:950px}
+    .accent{background:linear-gradient(90deg,#fff 10%,#ffb18e 55%,#ff6d2e);-webkit-background-clip:text;background-clip:text;color:transparent}
+    .sub{max-width:760px;margin:0 auto;color:var(--muted);font-size:19px}
+    .actions{margin-top:30px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap}
+    .btn{padding:12px 17px;border-radius:10px;border:1px solid #303848;font-weight:700;font-size:14px;background:#111722}
+    .btn.primary{background:var(--orange);border-color:var(--orange);color:white}
+    .badges{margin-top:28px;display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+    .badge{border:1px solid #262e3c;background:#0f141c;border-radius:8px;padding:6px 10px;color:#c8d0dd;font-size:12px}
+    section{padding:42px 0}
+    .section-head{margin-bottom:22px}
+    .kicker{color:var(--orange);font-weight:800;font-size:13px;text-transform:uppercase;letter-spacing:.13em}
+    h2{font-size:clamp(30px,4vw,46px);letter-spacing:-.035em;line-height:1.1;margin:8px 0 10px}
+    .lead{color:var(--muted);max-width:760px}
+    .panel{background:linear-gradient(180deg,#111722,#0d1219);border:1px solid #252e3a;border-radius:18px;box-shadow:0 22px 70px rgba(0,0,0,.28)}
+    .architecture{padding:16px;overflow:hidden}
+    .architecture img{display:block;width:100%;border-radius:12px;background:#0b0d12}
+    .caption{padding:13px 6px 2px;color:#8f9aaa;font-size:13px}
+    .flowline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px}
+    .flowstep{padding:8px 11px;border:1px solid #293240;border-radius:8px;background:#10161f;font-size:13px}
+    .arrow{color:#566174}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .card{padding:21px;border:1px solid #252e3a;background:#0f141d;border-radius:14px}
+    .num{font-size:12px;font-weight:900;color:var(--orange);letter-spacing:.1em}
+    .card h3{margin:7px 0 7px;font-size:17px}
+    .card p{margin:0;color:var(--muted);font-size:14px}
+    .two{display:grid;grid-template-columns:1.05fr .95fr;gap:18px}
+    .feature-list{display:grid;gap:12px}
+    .feature{display:flex;gap:14px;padding:16px;border-radius:12px;border:1px solid #252e3a;background:#0f141d}
+    .icon{flex:0 0 34px;height:34px;display:grid;place-items:center;border-radius:9px;background:#151e2a;border:1px solid #2a3544}
+    .feature b{display:block;margin-bottom:3px}
+    .feature span{color:var(--muted);font-size:14px}
+    pre{margin:0;background:#080b0f;border:1px solid #232b37;padding:19px;border-radius:14px;overflow:auto;color:#dce5f2;font-size:13px;line-height:1.7}
+    .note{padding:22px;border-left:3px solid var(--orange);background:#11161f;border-radius:12px;color:#dce2ec}
+    .note span{color:var(--muted)}
+    .cta{margin:44px 0 80px;padding:34px;text-align:center;border:1px solid #2d3441;border-radius:18px;background:linear-gradient(135deg,rgba(255,109,46,.12),rgba(98,167,255,.06))}
+    .cta h2{margin-top:0}
+    footer{border-top:1px solid #202733;padding:25px 0 40px;color:#8f99a8;font-size:13px}
+    .foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+    @media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr)}.two{grid-template-columns:1fr}.navlinks{display:none}}
+    @media(max-width:560px){.hero{padding-top:68px}.grid{grid-template-columns:1fr}.wrap{width:min(var(--max),calc(100% - 24px))}.cta{padding:24px}}
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="wrap navin">
+      <div class="brand"><span class="dot"></span>RapidHome</div>
+      <div class="navlinks">
+        <a href="#architecture">Architecture</a>
+        <a href="#reliability">Reliability</a>
+        <a href="#demo">Example</a>
+        <a href="https://github.com/azvicbello-cmd/rapidhhome-n8n-lead-automation" target="_blank" rel="noreferrer">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <header class="hero wrap">
+      <div class="eyebrow"><i></i> Working n8n automation project</div>
+      <h1>Lead intake and response, <span class="accent">without the manual bottleneck.</span></h1>
+      <p class="sub">RapidHome receives inbound leads, verifies requests, standardizes and scores the data, prevents duplicate processing, routes by priority and alerts the right channel with explicit failure handling.</p>
+      <div class="actions">
+        <a class="btn primary" href="#architecture">See the workflow</a>
+        <a class="btn" href="https://github.com/azvicbello-cmd/rapidhhome-n8n-lead-automation" target="_blank" rel="noreferrer">View source & testing notes</a>
+      </div>
+      <div class="badges">
+        <span class="badge">n8n</span><span class="badge">JavaScript</span><span class="badge">Webhooks</span>
+        <span class="badge">HMAC-SHA256</span><span class="badge">Idempotency</span><span class="badge">Telegram API</span>
+      </div>
+    </header>
+
+    <section id="architecture">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">Architecture</div>
+          <h2>One clear path from enquiry to action.</h2>
+          <p class="lead">The core is intentionally reusable: intake and security first, deterministic processing in the middle, then client-specific routing and downstream actions.</p>
+        </div>
+        <div class="panel architecture">
+          <img src="https://raw.githubusercontent.com/azvicbello-cmd/rapidhhome-n8n-lead-automation/main/assets/workflow-architecture.svg" alt="RapidHome n8n workflow architecture" />
+          <div class="caption">Sanitized architecture view. Credentials, tokens and private identifiers are excluded from the public project.</div>
+        </div>
+        <div class="flowline" aria-label="Workflow sequence">
+          <span class="flowstep">Receive</span><span class="arrow">→</span>
+          <span class="flowstep">Verify</span><span class="arrow">→</span>
+          <span class="flowstep">Normalize</span><span class="arrow">→</span>
+          <span class="flowstep">Score</span><span class="arrow">→</span>
+          <span class="flowstep">Deduplicate</span><span class="arrow">→</span>
+          <span class="flowstep">Store</span><span class="arrow">→</span>
+          <span class="flowstep">Route</span><span class="arrow">→</span>
+          <span class="flowstep">Notify</span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="section-head">
+          <div class="kicker">How it works</div>
+          <h2>Built around predictable business logic.</h2>
+        </div>
+        <div class="grid">
+          <div class="card"><div class="num">01</div><h3>Authenticated intake</h3><p>Accepts POST requests through a protected webhook rather than exposing an unrestricted endpoint.</p></div>
+          <div class="card"><div class="num">02</div><h3>Request integrity</h3><p>HMAC-SHA256 verification checks that the received payload matches the payload that was signed.</p></div>
+          <div class="card"><div class="num">03</div><h3>Normalization</h3><p>Incoming lead fields are transformed into one consistent internal structure before business rules run.</p></div>
+          <div class="card"><div class="num">04</div><h3>Deterministic scoring</h3><p>Contact completeness and urgency signals produce a transparent HOT, WARM or COLD classification.</p></div>
+          <div class="card"><div class="num">05</div><h3>Duplicate protection</h3><p>A deterministic lead key is checked against persistent storage to prevent repeat processing.</p></div>
+          <div class="card"><div class="num">06</div><h3>Persist before notify</h3><p>New leads are stored before downstream notification, reducing the risk of losing a lead if an alert fails.</p></div>
+          <div class="card"><div class="num">07</div><h3>Priority routing</h3><p>HOT leads move immediately to the urgent path while WARM and COLD paths remain available for different follow-up strategies.</p></div>
+          <div class="card"><div class="num">08</div><h3>Explicit outcomes</h3><p>The caller receives structured responses for success, duplicates, invalid signatures and notification failures.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="reliability">
+      <div class="wrap two">
+        <div>
+          <div class="section-head">
+            <div class="kicker">Reliability</div>
+            <h2>Designed beyond the happy path.</h2>
+            <p class="lead">The workflow treats external services and repeated requests as real failure scenarios rather than assuming every execution succeeds once.</p>
+          </div>
+          <div class="feature-list">
+            <div class="feature"><div class="icon">✓</div><div><b>Two request checks</b><span>Header authentication controls access, while HMAC validation checks payload integrity.</span></div></div>
+            <div class="feature"><div class="icon">↻</div><div><b>Idempotent processing</b><span>Repeated deliveries are recognized so the same event does not create uncontrolled duplicate records or alerts.</span></div></div>
+            <div class="feature"><div class="icon">!</div><div><b>Notification failure handling</b><span>Telegram delivery can retry, then move to a dedicated failure path rather than silently reporting success.</span></div></div>
+            <div class="feature"><div class="icon">↗</div><div><b>Reusable core</b><span>Scoring, thresholds, source systems, notification channels and downstream integrations can be changed per client.</span></div></div>
+          </div>
+        </div>
+        <div id="demo">
+          <div class="section-head">
+            <div class="kicker">Example</div>
+            <h2>A HOT lead in practice.</h2>
+          </div>
+          <pre>{
+  "name": "Michael Brown",
+  "email": "michael@example.com",
+  "phone": "+1 555 018 7744",
+  "service": "HVAC Repair",
+  "description": "Our AC has stopped cooling
+  and we need someone urgently today.",
+  "preferred_date": "2026-09-25"
+}</pre>
+          <div style="height:12px"></div>
+          <pre>{
+  "success": true,
+  "qualification": "hot",
+  "message": "Hot lead received and urgent
+  notification sent successfully."
+}</pre>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="wrap">
+        <div class="note">
+          <strong>Current scope:</strong> RapidHome is a working automation layer and portfolio project, not a claimed finished SaaS platform.
+          <span> A fuller client-facing implementation could add CRM integrations, dashboards and reporting, configurable qualification rules, fallback channels, stronger monitoring and multi-client configuration.</span>
+        </div>
+
+        <div class="cta">
+          <div class="kicker">Built by Victor Bello</div>
+          <h2>Automation that can be adapted to the client, not rebuilt from scratch.</h2>
+          <p class="lead" style="margin:0 auto 22px">The project demonstrates secure webhook handling, workflow design, API integration, deterministic routing, duplicate protection, failure handling and maintainable client-specific configuration.</p>
+          <div class="actions" style="margin-top:0">
+            <a class="btn primary" href="https://github.com/azvicbello-cmd/rapidhhome-n8n-lead-automation" target="_blank" rel="noreferrer">Open GitHub project</a>
+            <a class="btn" href="https://www.linkedin.com/in/victor-bello-az" target="_blank" rel="noreferrer">Victor on LinkedIn</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap foot">
+      <span>RapidHome Lead Automation · n8n / JavaScript / Webhooks</span>
+      <span>Public preview contains no credentials or private client data.</span>
+    </div>
+  </footer>
+</body>
+</html>
